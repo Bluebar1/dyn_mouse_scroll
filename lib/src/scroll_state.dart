@@ -15,7 +15,8 @@ class ScrollProvider extends ChangeNotifier {
   late ScrollTranslation st;
 
   ScrollProvider(this.controller, {required this.st, ScrollPhysics? phys}) {
-    this.physics = phys ??=
+    // use ParentListener physics if passed
+    physics = phys ??=
         (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
             ? kDesktopPhysics
             : kMobilePhysics;

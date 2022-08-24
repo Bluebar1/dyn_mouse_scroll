@@ -41,13 +41,13 @@ class DynWebScroll extends StatelessWidget {
   final double minFlickSPS;
 
   /// Lower & Upper bound distance (in pixels).
-  ///     Lower default: 60
-  ///     Upper default: 200
+  ///     Lower default: 120
+  ///     Upper default: 250
   final double lowerDistance, upperDistance;
 
   /// Upper & Lower bound duration (in milliseconds)
-  ///     Lower default: 120
-  ///     Upper default: 80
+  ///     Lower default: 200
+  ///     Upper default: 35
   final double lowerDuration, upperDuration;
 
   /// Lower & Upper bound distance of a FLICK event
@@ -72,7 +72,7 @@ class DynWebScroll extends StatelessWidget {
     this.flickAnimationCurve = Curves.linear,
     this.minFlickSPS = 60,
     this.lowerDistance = 120,
-    this.upperDistance = 300,
+    this.upperDistance = 250,
     this.lowerDuration = 200,
     this.upperDuration = 35,
     this.lowerFlickDistance = 400,
