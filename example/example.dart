@@ -10,7 +10,7 @@ class BasicUsageApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          body: DynWebScroll(
+          body: DynMouseScroll(
         children: List.generate(
             40,
             (index) => Container(
@@ -54,7 +54,7 @@ class MyScrollingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: DynWebScroll(
+        child: DynMouseScroll(
             hasParentListener: true,
             children: List.generate(
                 50,

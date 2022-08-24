@@ -8,7 +8,7 @@ import 'scroll_translation.dart';
 /// [ScrollTranslation]. If desktop platform is detected, default scrolling is
 /// locked. Mobile devices will be able to scroll normally.
 /// If the wrong platform is detected, the [Listener] wrapping
-/// [DynWebScroll.builder] will call the set physics method.
+/// [DynMouseScroll.builder] will call the set physics method.
 ///
 class ScrollProvider extends ChangeNotifier {
   final ScrollController controller;
@@ -31,8 +31,8 @@ class ScrollProvider extends ChangeNotifier {
 }
 
 /// To share physics between multiple scrollable widgets, wrap a single
-/// [ParentListener] around a widget that contains multiple [DynWebScroll] widgets,
-/// and set [DynWebScroll.hasParentListener] to true.
+/// [ParentListener] around a widget that contains multiple [DynMouseScroll] widgets,
+/// and set [DynMouseScroll.hasParentListener] to true.
 ///
 /// view example here ::
 class ParentPhysicsProvider with ChangeNotifier {

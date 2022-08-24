@@ -8,7 +8,7 @@ import 'scroll_translation.dart';
 const kMobilePhysics = BouncingScrollPhysics();
 const kDesktopPhysics = NeverScrollableScrollPhysics();
 
-class DynWebScroll extends StatelessWidget {
+class DynMouseScroll extends StatelessWidget {
   /// Passed to [ScrollTranslation] and animated dynamically given the speed
   /// the user is scrolling SPS (Scrolls Per Second).
   /// If you need to access the state of this controller, use [builder]
@@ -28,7 +28,7 @@ class DynWebScroll extends StatelessWidget {
   Function(BuildContext, ScrollController, ScrollPhysics)? builder;
 
   /// Set to true if [ParentListener] is an ancestor of this widget.
-  /// [ParentListener] will automatically update all child [DynWebScroll] widgets.
+  /// [ParentListener] will automatically update all child [] widgets.
   /// Defaults to false.
   final bool hasParentListener;
 
@@ -60,7 +60,7 @@ class DynWebScroll extends StatelessWidget {
   ///     Upper default: 20
   final double lowerFlickDuration, upperFlickDuration;
 
-  DynWebScroll({
+  DynMouseScroll({
     Key? key,
     this.hasParentListener = false,
     this.initialOffset = 0,
