@@ -2,20 +2,17 @@ import 'package:dyn_mouse_scroll/dyn_mouse_scroll.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const BasicUsageApp());
+  runApp(BasicUsageApp());
 }
 
 class BasicUsageApp extends StatelessWidget {
-  const BasicUsageApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
           body: DynWebScroll(
-        initialOffset: 2000,
         children: List.generate(
-            49,
+            40,
             (index) => Container(
                 height: 500,
                 color:
@@ -26,8 +23,6 @@ class BasicUsageApp extends StatelessWidget {
 }
 
 class LinkedPhysicsApp extends StatelessWidget {
-  const LinkedPhysicsApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

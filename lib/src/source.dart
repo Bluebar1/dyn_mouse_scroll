@@ -32,6 +32,8 @@ class DynWebScroll extends StatelessWidget {
   /// Defaults to false.
   final bool hasParentListener;
 
+  final Curve animationCurve, flickAnimationCurve;
+
   late ScrollTranslation scrollTranslation;
 
   /// Speed (in Scrolls per Second) that will trigger a flick animation.
@@ -66,11 +68,13 @@ class DynWebScroll extends StatelessWidget {
     this.slivers,
     this.children,
     this.builder,
+    this.animationCurve = Curves.linear,
+    this.flickAnimationCurve = Curves.linear,
     this.minFlickSPS = 60,
-    this.lowerDistance = 80,
-    this.upperDistance = 200,
-    this.lowerDuration = 120,
-    this.upperDuration = 80,
+    this.lowerDistance = 120,
+    this.upperDistance = 300,
+    this.lowerDuration = 200,
+    this.upperDuration = 35,
     this.lowerFlickDistance = 400,
     this.upperFlickDistance = 1000,
     this.lowerFlickDuration = 500,
@@ -95,6 +99,8 @@ class DynWebScroll extends StatelessWidget {
     controller ??= ScrollController(initialScrollOffset: initialOffset);
 
     scrollTranslation = ScrollTranslation(
+      animationCurve: animationCurve,
+      flickAnimationCurve: flickAnimationCurve,
       controller: controller!,
       distance: DynEquation(
           minSPS: minSPS,

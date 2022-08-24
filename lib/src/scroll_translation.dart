@@ -20,12 +20,13 @@ class DynEquation {
 
   /// Calculate the value of this [DynEquation] at the given X.
   double val(double x) => Tween<double>(begin: lowerValue, end: upperValue)
-      .transform(curve.transform(x / maxSPS));
+      .transform(curve.transform(x / (maxSPS - minSPS)));
 }
 
 class ScrollTranslation {
   /// Created in [ScrollProvider].
   final ScrollController controller;
+  final Curve animationCurve, flickAnimationCurve;
 
   final DynEquation distance;
   final DynEquation duration;
@@ -35,6 +36,8 @@ class ScrollTranslation {
   /// Constructor converts [String]s into [MathNode]s to be used in calculations,
   ScrollTranslation(
       {required this.controller,
+      required this.animationCurve,
+      required this.flickAnimationCurve,
       required this.distance,
       required this.duration,
       required this.flickDistance,
@@ -49,11 +52,15 @@ class ScrollTranslation {
   void animateScroll(double change, Duration timeStamp) async {
     sps = 1000 / (timeStamp.inMilliseconds - lastTimeStamp.inMilliseconds);
 
+    //limit SPS by upper bound
+    if (sps > (flickDistance.maxSPS - flickDistance.minSPS)) {
+      sps = (flickDistance.maxSPS - flickDistance.minSPS);
+    }
+
     lastTimeStamp = timeStamp;
     final new_direction = (change > 0) ? AxisDirection.down : AxisDirection.up;
 
     if (isAnimating && new_direction.name != direction.name) {
-      print('cancel');
       controller.jumpTo(controller.offset);
       return;
     }
@@ -65,37 +72,28 @@ class ScrollTranslation {
       await _startFlickScroll(change);
       return;
     }
-    // print(direction);
 
     double dist = distance.val(sps) * negate;
-
     int dur = duration.val(sps).round();
 
     controller.animateTo(controller.position.pixels + dist,
-        duration: Duration(milliseconds: dur), curve: Curves.linear);
+        duration: Duration(milliseconds: dur), curve: animationCurve);
   }
 
   Future<void> _startFlickScroll(double change) async {
+    // block new scroll events, cancel if direction has changed
     isAnimating = true;
 
     double dist = flickDistance.val(sps) * negate;
-
     int dur = flickDuration.val(sps).round();
-    print('FLICK SPS : $sps');
-    print('FLICK DIST :: $dist');
-    print('FLICK DUR : $dur');
 
     await controller.animateTo(controller.position.pixels + dist,
-        duration: Duration(milliseconds: dur), curve: Curves.linear);
-
+        duration: Duration(milliseconds: dur), curve: flickAnimationCurve);
+    // allow new scroll events
     isAnimating = false;
 
     return;
   }
 
   static get negate => (direction == AxisDirection.up) ? -1 : 1;
-
-  // => exp.calc(_xVar).round();
-
-  // MathVariableValues get _xVar => MathVariableValues({'x': sps});
 }
