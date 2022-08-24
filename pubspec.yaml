@@ -1,0 +1,24 @@
+name: dyn_mouse_scroll
+description: A wrapper for scrollable widgets that enables smooth scrolling with a mouse on all platforms.
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.3
+  universal_io: ^2.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+
+
+
+ 
