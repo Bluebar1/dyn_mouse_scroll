@@ -58,7 +58,7 @@ Each equation also has lower and upper Y values than can be either distance or d
 The 'lower' value corresponds to the minSPS X value (left side), make this greater than 'upper' for negative slope.
 For example, because I want duration to decrease as speed increases, I will make lowerValue > upperValue.
 * SPS 1 (lower)                     = Distance:80, Duration:120
-* SPS 59 (normal lower bound)       = Distance:200, Duration:80
+* SPS 59 (normal upper bound)       = Distance:200, Duration:80
 * SPS 60 (flick lower bound)        = Distance:400, Duraton:500
 * SPS 60+ (incr dist, decr dur)     = Distance:400+, Duration: 500-
 
