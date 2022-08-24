@@ -1,7 +1,7 @@
 # Dynamic Mouse Scroll
 A wrapper for scrollable widgets that enables smooth scrolling with a mouse on all platforms.
 
-<img src="https://github.com/Bluebar1/dyn_mouse_scroll/blob/main/assets/scrolling.gif" width="200" height="350"/>
+<img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/scrolling.gif" width="200" height="350"/>
 
 ## Features
 * Animate smooth scroll based on speed of user's scroll.
