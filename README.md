@@ -70,4 +70,8 @@ For example, because I want duration to decrease as speed increases, I will make
 double val(double x) => Tween<double>(begin: lowerValue, end: upperValue)
       .transform(curve.transform(x / maxSPS));
 ```
+<<<<<<< HEAD
 Please feel free to reach out or contriute.
+=======
+Please feel free to reach out or contriute.
+>>>>>>> 7099f2be5b4072c6752ec72e00c10c51f3c2cd03
