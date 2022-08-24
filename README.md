@@ -30,15 +30,15 @@ active scroll events in the same direction are ignored, opposite direction cance
 ## Basic Usage
 * Providing children will automatically wrap them as slivers.
 ```dart
-DynWebScroll(children: List<Widget>)
+DynMouseScroll(children: List<Widget>)
 ```
 * Providing the widgets as slivers will not wrap them.
 ```dart
-DynWebScroll(slivers: List<Widget>)
+DynMouseScroll(slivers: List<Widget>)
 ```
 * Or if you want full control of your children widgets use builder.
 ```dart
-DynWebScroll(
+DynMouseScroll(
   builder: (context, controller, physics) => MyScrollableWidget(
     controller: controller,
     physics: physics))
