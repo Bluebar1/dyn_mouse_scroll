@@ -1,5 +1,8 @@
 # Dynamic Mouse Scroll
 A wrapper for scrollable widgets that enables smooth scrolling with a mouse on all platforms.
+
+<img src="/assets/scrolling.gif" width="200" height="350"/>
+
 ## Features
 * Animate smooth scroll based on speed of user's scroll.
 * Uses [universal_io](https://pub.dev/packages/universal_io) to detect if platform is mobile or desktop.
