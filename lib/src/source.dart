@@ -9,32 +9,22 @@ const kMobilePhysics = BouncingScrollPhysics();
 const kDesktopPhysics = NeverScrollableScrollPhysics();
 
 class DynMouseScroll extends StatelessWidget {
-  /// Passed to [ScrollTranslation] and animated dynamically given the speed
-  /// the user is scrolling SPS (Scrolls Per Second).
-  /// If you need to access the state of this controller, use [builder]
-  ScrollController? controller;
-
   /// Optional, where [controller] should set its initial scroll position.
   /// Defaults to 0.
   final double initialOffset;
 
-  /// If you are not using slivers the provided children will be wrapped
-  /// [SliverToBoxAdapter] before being passed to the [CustomScrollView]
-  List<Widget>? children, slivers;
-
   /// If providing slivers or widgets does not suit your needs or you need
   /// to access [controller], use:
   ///       builder: (context, controller, physics) => ...
-  Function(BuildContext, ScrollController, ScrollPhysics)? builder;
+  final Function(BuildContext, ScrollController, ScrollPhysics) builder;
 
   /// Set to true if [ParentListener] is an ancestor of this widget.
   /// [ParentListener] will automatically update all child [] widgets.
   /// Defaults to false.
   final bool hasParentListener;
 
+  /// Curves applied to animation of [ScrollController.animateTo]
   final Curve animationCurve, flickAnimationCurve;
-
-  late ScrollTranslation scrollTranslation;
 
   /// Speed (in Scrolls per Second) that will trigger a flick animation.
   /// Defaults to 60.
@@ -60,14 +50,27 @@ class DynMouseScroll extends StatelessWidget {
   ///     Upper default: 20
   final double lowerFlickDuration, upperFlickDuration;
 
-  DynMouseScroll({
+  /// Curves applied to [DynEquation.val]. Changes the output of to
+  /// match a given [Curve].
+  /// The default for each is [Curves.linear] and should only be changed for
+  /// fine-tuning.
+  /// WARNING Do not use any [Curve] that exceeds the bounds of [0,1]
+  /// such as [Curves.easeInOutBack]  <--- do not use
+  final Curve distanceCurve,
+      durationCurve,
+      flickDistanceCurve,
+      flickDurationCurve;
+
+  /// Total SPS (normal and flick)
+  ///     min default: 1
+  ///     max default: 200
+  final double minSPS, maxFlickSPS;
+
+  const DynMouseScroll({
     Key? key,
+    required this.builder,
     this.hasParentListener = false,
     this.initialOffset = 0,
-    this.controller,
-    this.slivers,
-    this.children,
-    this.builder,
     this.animationCurve = Curves.linear,
     this.flickAnimationCurve = Curves.linear,
     this.minFlickSPS = 60,
@@ -79,29 +82,23 @@ class DynMouseScroll extends StatelessWidget {
     this.upperFlickDistance = 1000,
     this.lowerFlickDuration = 500,
     this.upperFlickDuration = 20,
+    this.distanceCurve = Curves.linear,
+    this.durationCurve = Curves.linear,
+    this.flickDistanceCurve = Curves.linear,
+    this.flickDurationCurve = Curves.linear,
+    this.minSPS = 1,
+    this.maxFlickSPS = 200,
+  }) : super(key: key);
 
-    /// Curves and outer bounds for fine-turning.
-    Curve distanceCurve = Curves.linear,
-    Curve durationCurve = Curves.linear,
-    Curve flickDistanceCurve = Curves.linear,
-    Curve flickDurationCurve = Curves.linear,
-    double minSPS = 1,
-    double maxFlickSPS = 200,
-  }) : super(key: key) {
-    assert(slivers != null || children != null || builder != null);
-    assert(minSPS < minFlickSPS && minFlickSPS < maxFlickSPS);
+  @override
+  Widget build(BuildContext context) {
+    ScrollController controller =
+        ScrollController(initialScrollOffset: initialOffset);
 
-    if (builder == null) {
-      slivers ??= List.generate(children!.length,
-          (index) => SliverToBoxAdapter(child: children![index]));
-    }
-
-    controller ??= ScrollController(initialScrollOffset: initialOffset);
-
-    scrollTranslation = ScrollTranslation(
+    ScrollTranslation scrollTranslation = ScrollTranslation(
       animationCurve: animationCurve,
       flickAnimationCurve: flickAnimationCurve,
-      controller: controller!,
+      controller: controller,
       distance: DynEquation(
           minSPS: minSPS,
           maxSPS: minFlickSPS,
@@ -127,17 +124,13 @@ class DynMouseScroll extends StatelessWidget {
           upperValue: upperFlickDuration,
           curve: flickDurationCurve),
     );
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return ChangeNotifierProvider<ScrollProvider>(
         lazy: false,
         create: (_) => (hasParentListener)
-            ? ScrollProvider(controller!,
-                st: scrollTranslation,
+            ? ScrollProvider(scrollTranslation,
                 phys: context.read<ParentPhysicsProvider>().physics)
-            : ScrollProvider(controller!, st: scrollTranslation),
+            : ScrollProvider(scrollTranslation),
         builder: (context, _) {
           ScrollProvider sp = context.read<ScrollProvider>();
 
@@ -156,33 +149,31 @@ class DynMouseScroll extends StatelessWidget {
               onPointerSignal: (t) {
                 // Ensure correct physics
                 if (t.kind == PointerDeviceKind.mouse &&
-                    physics == kMobilePhysics)
+                    physics == kMobilePhysics) {
                   physicsProvider.setPhysics(kDesktopPhysics);
+                }
 
                 // Animate ScrollProvider's ScrollTranslation
-                if (t is PointerScrollEvent)
+                if (t is PointerScrollEvent) {
                   sp.st.animateScroll(t.scrollDelta.dy, t.timeStamp);
+                }
               },
               // Touch screen user input
               onPointerDown: (e) {
                 // Ensure correct physics
                 if (e.kind == PointerDeviceKind.touch &&
-                    physics == kDesktopPhysics)
+                    physics == kDesktopPhysics) {
                   physicsProvider.setPhysics(kMobilePhysics);
+                }
               },
-              child: (builder != null)
-                  ? builder!(context, sp.controller, physics)
-                  : CustomScrollView(
-                      slivers: slivers!,
-                      controller: sp.controller,
-                      physics: physics));
+              child: builder(context, controller, physics));
         });
   }
 }
 
 class ParentListener extends StatelessWidget {
   final Widget child;
-  const ParentListener({Key? key, required this.child}) : super(key: key);
+  const ParentListener({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

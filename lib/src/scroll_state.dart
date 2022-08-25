@@ -11,10 +11,9 @@ import 'scroll_translation.dart';
 /// [DynMouseScroll.builder] will call the set physics method.
 ///
 class ScrollProvider extends ChangeNotifier {
-  final ScrollController controller;
-  late ScrollTranslation st;
+  final ScrollTranslation st;
 
-  ScrollProvider(this.controller, {required this.st, ScrollPhysics? phys}) {
+  ScrollProvider(this.st, {ScrollPhysics? phys}) {
     // use ParentListener physics if passed
     physics = phys ??=
         (Platform.isWindows || Platform.isLinux || Platform.isMacOS)

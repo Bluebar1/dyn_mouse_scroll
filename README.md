@@ -1,7 +1,14 @@
 # Dynamic Mouse Scroll
 A wrapper for scrollable widgets that enables smooth scrolling with a mouse on all platforms.
 
-<img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/scrolling.gif" width="200" height="350"/>
+First gif: Scrolling slowly.  
+Second gif: Scrolling quickly (flick scroll).   
+Thrird gif: Mobile drag scroll detected, physics change.  
+<p float="left">
+  <img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/slow_scroll.gif" width="200" height="350"/>
+  <img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/fast_scroll.gif" width="200" height="350"/>
+  <img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/drag_scroll.gif" width="200" height="350"/>
+</p>
 
 ## Features
 * Animate smooth scroll based on speed of user's scroll.
@@ -9,7 +16,24 @@ A wrapper for scrollable widgets that enables smooth scrolling with a mouse on a
 * Automatically detect if the wrong ScrollPhysics is being used and update using [provider](https://pub.dev/packages/provider).
 * If you are using multiple scrolling widgets, wrap one ParentListener around your app to ensure all are using the same physics.
 * Fully adjust the distance and duration of your scroll events.
-
+## Basic Usage
+```dart
+DynMouseScroll(
+  builder: (context, controller, physics) => ListView(
+    controller: controller,
+    physics: physics,
+    children: ...
+    )
+)
+```
+* To link the ScrollPhysics of multiple DynMouseScroll Widgets, wrap them in a SINGLE ParentListener and set hasParentListener to true.
+```dart
+ParentListener(
+  child: Row(children: [
+    DynMouseScroll(hasParentListener: true, children: ...),
+    DynMouseScroll(hasParentListener: true, children: ...),
+  ]))
+```
 ## Problem:
 Flutter does not animate smooth scrolls for pointers, causing choppy experiences for the end user.
 One package, [web_smooth_scroll](https://pub.dev/packages/web_smooth_scroll), attempts to fix this problem
@@ -27,30 +51,7 @@ and duration of this animation will be much larger than the non-flick animations
 active scroll events in the same direction are ignored, opposite direction cancels (stops) the scroll animation.
 
 
-## Basic Usage
-* Providing children will automatically wrap them as slivers.
-```dart
-DynMouseScroll(children: List<Widget>)
-```
-* Providing the widgets as slivers will not wrap them.
-```dart
-DynMouseScroll(slivers: List<Widget>)
-```
-* Or if you want full control of your children widgets use builder.
-```dart
-DynMouseScroll(
-  builder: (context, controller, physics) => MyScrollableWidget(
-    controller: controller,
-    physics: physics))
-```
-* To link the ScrollPhysics of multiple DynMouseScroll Widgets, wrap them in a SINGLE ParentListener and set hasParentListener to true.
-```dart
-ParentListener(
-  child: Row(children: [
-    DynMouseScroll(hasParentListener: true, children: ...),
-    DynMouseScroll(hasParentListener: true, children: ...),
-  ]))
-```
+
 ## Tuning
 Normal and flick scroll events each have their own distance and duration equation values.
 Each equation has min/max SPS values. By default these values are:
