@@ -3,7 +3,7 @@ A wrapper for scrollable widgets that enables smooth scrolling with a mouse on a
 
 First gif: Scrolling slowly.  
 Second gif: Scrolling quickly (flick scroll).   
-Thrird gif: Mobile drag scroll detected, physics change.  
+Third gif: Mobile drag scroll detected, physics change.  
 <p float="left">
   <img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/slow_scroll.gif" width="200" height="350"/>
   <img src="https://raw.githubusercontent.com/Bluebar1/dyn_mouse_scroll/main/assets/fast_scroll.gif" width="200" height="350"/>
@@ -71,7 +71,9 @@ For example, because I want duration to decrease as speed increases, I will make
 ## Additional information
 #### How distance and duration values are calulated:
 ```dart
-double val(double x) => Tween<double>(begin: lowerValue, end: upperValue)
-      .transform(curve.transform(x / maxSPS));
+spsRange = maxSPS - minSPS;
+tween = Tween<double>(begin: lowerValue, end: upperValue);
+double val(double sps) => tween.transform(applyCurve(sps / spsRange));
+double applyCurve(double x) => curve.transform(x);
 ```
 
