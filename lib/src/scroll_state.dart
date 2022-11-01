@@ -13,12 +13,19 @@ import 'scroll_translation.dart';
 class ScrollProvider extends ChangeNotifier {
   final ScrollTranslation st;
 
-  ScrollProvider(this.st, {ScrollPhysics? phys}) {
+  /// Default scroll physics for mobile devices.
+  final ScrollPhysics mobileScrollPhysics;
+
+  ScrollProvider(
+    this.st, {
+    required this.mobileScrollPhysics,
+    ScrollPhysics? phys,
+  }) {
     // use ParentListener physics if passed
     physics = phys ??=
         (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
             ? kDesktopPhysics
-            : kMobilePhysics;
+            : mobileScrollPhysics;
   }
 
   late ScrollPhysics physics;
@@ -35,10 +42,15 @@ class ScrollProvider extends ChangeNotifier {
 ///
 /// view example here ::
 class ParentPhysicsProvider with ChangeNotifier {
+  /// Default scroll physics for mobile devices.
+  final ScrollPhysics mobileScrollPhysics;
+
+  ParentPhysicsProvider({required this.mobileScrollPhysics});
+
   late ScrollPhysics physics =
       (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
           ? kDesktopPhysics
-          : kMobilePhysics;
+          : mobileScrollPhysics;
 
   setPhysics(ScrollPhysics physics) {
     this.physics = physics;
