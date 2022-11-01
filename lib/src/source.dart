@@ -5,10 +5,13 @@ import 'package:provider/provider.dart';
 import 'scroll_state.dart';
 import 'scroll_translation.dart';
 
-const kMobilePhysics = BouncingScrollPhysics();
+const kDefaultMobilePhysics = BouncingScrollPhysics();
 const kDesktopPhysics = NeverScrollableScrollPhysics();
 
 class DynMouseScroll extends StatelessWidget {
+  /// Scroll physics for mobile devices. Default is [BouncingScrollPhysics].
+  final ScrollPhysics mobileScrollPhysics;
+
   /// Optional, where [controller] should set its initial scroll position.
   /// Defaults to 0.
   final double initialOffset;
@@ -69,6 +72,7 @@ class DynMouseScroll extends StatelessWidget {
   const DynMouseScroll({
     Key? key,
     required this.builder,
+    this.mobileScrollPhysics = kDefaultMobilePhysics,
     this.hasParentListener = false,
     this.initialOffset = 0,
     this.animationCurve = Curves.linear,
@@ -128,9 +132,15 @@ class DynMouseScroll extends StatelessWidget {
     return ChangeNotifierProvider<ScrollProvider>(
         lazy: false,
         create: (_) => (hasParentListener)
-            ? ScrollProvider(scrollTranslation,
-                phys: context.read<ParentPhysicsProvider>().physics)
-            : ScrollProvider(scrollTranslation),
+            ? ScrollProvider(
+                scrollTranslation,
+                mobileScrollPhysics: mobileScrollPhysics,
+                phys: context.read<ParentPhysicsProvider>().physics,
+              )
+            : ScrollProvider(
+                scrollTranslation,
+                mobileScrollPhysics: mobileScrollPhysics,
+              ),
         builder: (context, _) {
           ScrollProvider sp = context.read<ScrollProvider>();
 
@@ -149,7 +159,7 @@ class DynMouseScroll extends StatelessWidget {
               onPointerSignal: (t) {
                 // Ensure correct physics
                 if (t.kind == PointerDeviceKind.mouse &&
-                    physics == kMobilePhysics) {
+                    physics == mobileScrollPhysics) {
                   physicsProvider.setPhysics(kDesktopPhysics);
                 }
 
@@ -163,7 +173,7 @@ class DynMouseScroll extends StatelessWidget {
                 // Ensure correct physics
                 if (e.kind == PointerDeviceKind.touch &&
                     physics == kDesktopPhysics) {
-                  physicsProvider.setPhysics(kMobilePhysics);
+                  physicsProvider.setPhysics(mobileScrollPhysics);
                 }
               },
               child: builder(context, controller, physics));
@@ -173,12 +183,21 @@ class DynMouseScroll extends StatelessWidget {
 
 class ParentListener extends StatelessWidget {
   final Widget child;
-  const ParentListener({super.key, required this.child});
+
+  /// Scroll physics for mobile devices. Default is [BouncingScrollPhysics].
+  final ScrollPhysics mobileScrollPhysics;
+
+  const ParentListener({
+    super.key,
+    this.mobileScrollPhysics = kDefaultMobilePhysics,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ParentPhysicsProvider>(
-      create: (_) => ParentPhysicsProvider(),
+      create: (_) =>
+          ParentPhysicsProvider(mobileScrollPhysics: mobileScrollPhysics),
       child: child,
     );
   }
