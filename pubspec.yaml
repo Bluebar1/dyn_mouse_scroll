@@ -1,6 +1,6 @@
 name: dyn_mouse_scroll
 description: A wrapper for scrollable widgets that enables smooth scrolling with a mouse on all platforms.
-version: 1.0.6
+version: 1.0.7
 repository: https://github.com/Bluebar1/dyn_mouse_scroll
 
 environment:

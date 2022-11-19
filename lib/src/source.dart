@@ -4,14 +4,12 @@ import 'package:provider/provider.dart';
 import 'scroll_state.dart';
 
 class DynMouseScroll extends StatelessWidget {
-  final bool hasParentListener;
   final ScrollPhysics mobilePhysics;
   final int durationMS;
   final Function(BuildContext, ScrollController, ScrollPhysics) builder;
 
   const DynMouseScroll({
     super.key,
-    this.hasParentListener = false,
     this.mobilePhysics = kMobilePhysics,
     this.durationMS = 200,
     required this.builder,
