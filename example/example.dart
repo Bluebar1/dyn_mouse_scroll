@@ -34,10 +34,9 @@ class LinkedPhysicsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: ParentListener(
-            child: Scaffold(
-                body: Center(
-                    child: Column(children: [
+        home: Scaffold(
+            body: Center(
+                child: Column(children: [
       Expanded(
           child: Row(children: const [
         MyScrollingWidget(height: 100, colors: [Colors.blue, Colors.red]),
@@ -48,7 +47,7 @@ class LinkedPhysicsApp extends StatelessWidget {
         MyScrollingWidget(height: 150, colors: [Colors.purple, Colors.orange]),
         MyScrollingWidget(height: 80, colors: [Colors.black, Colors.white])
       ]))
-    ])))));
+    ]))));
   }
 }
 
