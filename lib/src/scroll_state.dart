@@ -14,7 +14,8 @@ class ScrollState with ChangeNotifier {
 
   ScrollState(this.mobilePhysics, this.durationMS);
 
-  void handleDesktopScroll(PointerSignalEvent event, int scrollSpeed) {
+  void handleDesktopScroll(
+      PointerSignalEvent event, int scrollSpeed, Curve animationCurve) {
     // Ensure desktop physics is being used.
     if (physics == kMobilePhysics) {
       physics = kDesktopPhysics;
@@ -37,7 +38,7 @@ class ScrollState with ChangeNotifier {
       controller.animateTo(
         futurePosition,
         duration: Duration(milliseconds: durationMS),
-        curve: Curves.linear,
+        curve: animationCurve,
       );
     }
   }
