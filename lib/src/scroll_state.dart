@@ -13,7 +13,6 @@ class ScrollState with ChangeNotifier {
   final int durationMS;
 
   bool prevDeltaPositive = false;
-  int prevStartingPosition = 0;
 
   ScrollState(this.mobilePhysics, this.durationMS);
 
@@ -37,12 +36,10 @@ class ScrollState with ChangeNotifier {
         }
       }
       bool currentDeltaPositive = event.scrollDelta.dy > 0;
-      int newPrevStartingPosition = futurePosition;
       if (currentDeltaPositive == prevDeltaPositive)
         futurePosition += event.scrollDelta.dy * scrollSpeed;
-      else futurePosition = prevStartingPosition + event.scrollDelta.dy * scrollSpeed;
+      else futurePosition = controller.position.pixels + event.scrollDelta.dy * scrollSpeed;
       prevDeltaPositive = event.scrollDelta.dy > 0;
-      prevStartingPosition = newPrevStartingPosition;
 
       controller.animateTo(
         futurePosition,
