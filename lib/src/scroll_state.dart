@@ -12,6 +12,9 @@ class ScrollState with ChangeNotifier {
   final ScrollPhysics mobilePhysics;
   final int durationMS;
 
+  bool prevDeltaPositive = false;
+  int prevStartingPosition = 0;
+
   ScrollState(this.mobilePhysics, this.durationMS);
 
   void handleDesktopScroll(
@@ -33,7 +36,13 @@ class ScrollState with ChangeNotifier {
           if (dy > 0) return;
         }
       }
-      futurePosition += event.scrollDelta.dy * scrollSpeed;
+      bool currentDeltaPositive = event.scrollDelta.dy > 0;
+      int newPrevStartingPosition = futurePosition;
+      if (currentDeltaPositive == prevDeltaPositive)
+        futurePosition += event.scrollDelta.dy * scrollSpeed;
+      else futurePosition = prevStartingPosition + event.scrollDelta.dy * scrollSpeed;
+      prevDeltaPositive = event.scrollDelta.dy > 0;
+      prevStartingPosition = newPrevStartingPosition;
 
       controller.animateTo(
         futurePosition,
