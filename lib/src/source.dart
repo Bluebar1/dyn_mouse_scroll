@@ -13,9 +13,9 @@ class DynMouseScroll extends StatelessWidget {
   const DynMouseScroll({
     super.key,
     this.mobilePhysics = kMobilePhysics,
-    this.durationMS = 200,
-    this.scrollSpeed = 1,
-    this.animationCurve = Curves.linear,
+    this.durationMS = 380,
+    this.scrollSpeed = 2,
+    this.animationCurve = Curves.easeOutQuart,
     required this.builder,
   });
 
