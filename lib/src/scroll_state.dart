@@ -9,11 +9,13 @@ class ScrollState with ChangeNotifier {
   final ScrollController controller = ScrollController();
   ScrollPhysics physics = kMobilePhysics;
   double futurePosition = 0;
+  bool updateState = false;
 
   final ScrollPhysics mobilePhysics;
   final int durationMS;
 
   bool prevDeltaPositive = false;
+  double? lastLock = null;
 
   Future<void>? _animationEnd;
 
@@ -30,24 +32,47 @@ class ScrollState with ChangeNotifier {
   void handleDesktopScroll(
       PointerSignalEvent event, int scrollSpeed, Curve animationCurve, [bool readLastDirection = true]) {
     // Ensure desktop physics is being used.
-    if (physics == kMobilePhysics) {
+    if (physics == kMobilePhysics || lastLock != null) {
+      if (lastLock != null) updateState = !updateState;
       if (event is PointerScrollEvent) {
         double posPixels = controller.position.pixels;
         if ((posPixels == controller.position.minScrollExtent && event.scrollDelta.dy < 0)
             || (posPixels == controller.position.maxScrollExtent &&  event.scrollDelta.dy > 0)) return;
         else physics = kDesktopPhysics;
         bool outOfBounds = posPixels < controller.position.minScrollExtent || posPixels > controller.position.maxScrollExtent;
-        if (!outOfBounds) controller.jumpTo(posPixels - calcMaxDelta(controller, event.scrollDelta.dy));
+        double calcDelta = calcMaxDelta(controller, event.scrollDelta.dy);
+        if (!outOfBounds) controller.jumpTo(lastLock ?? (posPixels - calcDelta));
+        double deltaDelta = calcDelta - event.scrollDelta.dy;
         handlePipelinedScroll = () {
           handlePipelinedScroll = null;
-          if (outOfBounds) controller.jumpTo(controller.position.pixels - calcMaxDelta(controller, event.scrollDelta.dy));
-          handleDesktopScroll(event, scrollSpeed, animationCurve, false);
+          double currPos = controller.position.pixels;
+          double currDelta = event.scrollDelta.dy;
+          bool shouldLock = lastLock != null ? (lastLock == currPos) : (posPixels != currPos + deltaDelta && 
+            (currPos != controller.position.maxScrollExtent || currDelta < 0) && 
+            (currPos != controller.position.minScrollExtent || currDelta > 0));
+          //bool shouldLock = lastLock != null ? (lastLock == currPos) : (currPos != posPixels);
+          if (!outOfBounds && shouldLock) {
+            print("SHOULDLOCK");
+            controller.jumpTo(posPixels);
+            lastLock = posPixels;
+            controller.position.moveTo(posPixels)..whenComplete(() {
+              physics = kMobilePhysics;
+              notifyListeners();
+            });
+            return;
+          }
+          else {
+            if (lastLock != null || outOfBounds) 
+              controller.jumpTo(lastLock ?? (currPos - calcMaxDelta(controller, currDelta)));
+            lastLock = null;
+            handleDesktopScroll(event, scrollSpeed, animationCurve, false);
+          }
         };
         notifyListeners();
       }
       return;
     }
-    if (event is PointerScrollEvent) {
+    else if (event is PointerScrollEvent) {
       bool currentDeltaPositive = event.scrollDelta.dy > 0;
       if (readLastDirection && currentDeltaPositive == prevDeltaPositive)
         futurePosition += event.scrollDelta.dy * scrollSpeed;
