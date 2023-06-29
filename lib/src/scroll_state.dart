@@ -31,17 +31,20 @@ class ScrollState with ChangeNotifier {
       PointerSignalEvent event, int scrollSpeed, Curve animationCurve, [bool readLastDirection = true]) {
     // Ensure desktop physics is being used.
     if (physics == kMobilePhysics) {
-      physics = kDesktopPhysics;
       if (event is PointerScrollEvent) {
-        bool outOfBounds = controller.position.pixels < controller.position.minScrollExtent || controller.position.pixels > controller.position.maxScrollExtent;
-        if (!outOfBounds) controller.jumpTo(controller.position.pixels - calcMaxDelta(controller, event.scrollDelta.dy));
+        double posPixels = controller.position.pixels;
+        if ((posPixels == controller.position.minScrollExtent && event.scrollDelta.dy < 0)
+            || (posPixels == controller.position.maxScrollExtent &&  event.scrollDelta.dy > 0)) return;
+        else physics = kDesktopPhysics;
+        bool outOfBounds = posPixels < controller.position.minScrollExtent || posPixels > controller.position.maxScrollExtent;
+        if (!outOfBounds) controller.jumpTo(posPixels - calcMaxDelta(controller, event.scrollDelta.dy));
         handlePipelinedScroll = () {
           handlePipelinedScroll = null;
           if (outOfBounds) controller.jumpTo(controller.position.pixels - calcMaxDelta(controller, event.scrollDelta.dy));
           handleDesktopScroll(event, scrollSpeed, animationCurve, false);
         };
+        notifyListeners();
       }
-      notifyListeners();
       return;
     }
     if (event is PointerScrollEvent) {
