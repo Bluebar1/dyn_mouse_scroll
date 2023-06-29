@@ -62,7 +62,7 @@ class ScrollState with ChangeNotifier {
           }
           else {
             if (lastLock != null || outOfBounds) 
-              controller.jumpTo(lastLock ?? (currPos - calcMaxDelta(controller, currDelta)));
+              controller.jumpTo(lastLock != null ? posPixels : (currPos - calcMaxDelta(controller, currDelta)));
             lastLock = null;
             handleDesktopScroll(event, scrollSpeed, animationCurve, false);
           }
