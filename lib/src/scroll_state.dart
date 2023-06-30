@@ -50,7 +50,6 @@ class ScrollState with ChangeNotifier {
           bool shouldLock = lastLock != null ? (lastLock == currPos) : (posPixels != currPos + deltaDelta && 
             (currPos != controller.position.maxScrollExtent || currDelta < 0) && 
             (currPos != controller.position.minScrollExtent || currDelta > 0));
-          //bool shouldLock = lastLock != null ? (lastLock == currPos) : (currPos != posPixels);
           if (!outOfBounds && shouldLock) {
             controller.jumpTo(posPixels);
             lastLock = posPixels;
