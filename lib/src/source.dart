@@ -6,7 +6,7 @@ import 'scroll_state.dart';
 class DynMouseScroll extends StatelessWidget {
   final ScrollPhysics mobilePhysics;
   final int durationMS;
-  final int scrollSpeed;
+  final double scrollSpeed;
   final Curve animationCurve;
   final Function(BuildContext, ScrollController, ScrollPhysics) builder;
 

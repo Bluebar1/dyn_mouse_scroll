@@ -30,7 +30,7 @@ class ScrollState with ChangeNotifier {
   }
 
   void handleDesktopScroll(
-      PointerSignalEvent event, int scrollSpeed, Curve animationCurve, [bool readLastDirection = true]) {
+      PointerSignalEvent event, double scrollSpeed, Curve animationCurve, [bool readLastDirection = true]) {
     // Ensure desktop physics is being used.
     if (physics == kMobilePhysics || lastLock != null) {
       if (lastLock != null) updateState = !updateState;
