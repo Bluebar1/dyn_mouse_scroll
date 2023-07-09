@@ -6,12 +6,16 @@ import 'scroll_state.dart';
 class DynMouseScroll extends StatelessWidget {
   final ScrollPhysics mobilePhysics;
   final int durationMS;
+  final double scrollSpeed;
+  final Curve animationCurve;
   final Function(BuildContext, ScrollController, ScrollPhysics) builder;
 
   const DynMouseScroll({
     super.key,
     this.mobilePhysics = kMobilePhysics,
-    this.durationMS = 200,
+    this.durationMS = 380,
+    this.scrollSpeed = 2,
+    this.animationCurve = Curves.easeOutQuart,
     required this.builder,
   });
 
@@ -23,8 +27,11 @@ class DynMouseScroll extends StatelessWidget {
           final scrollState = context.read<ScrollState>();
           final controller = scrollState.controller;
           final physics = context.select((ScrollState s) => s.physics);
+          final updateState = context.select((ScrollState s) => s.updateState);
+          scrollState.handlePipelinedScroll?.call();
           return Listener(
-            onPointerSignal: scrollState.handleDesktopScroll,
+            onPointerSignal: (signalEvent) => scrollState.handleDesktopScroll(
+                signalEvent, scrollSpeed, animationCurve),
             onPointerDown: scrollState.handleTouchScroll,
             child: builder(context, controller, physics),
           );
